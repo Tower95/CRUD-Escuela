@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//● Alumno: Id, Nombre, Apellidos, Género, Fecha Nacimiento
+model Alumno {
+  id              Int           @id @default(autoincrement())
+  nombre          String
+  apellidos       String
+  Genero          String
+  FechaNacimiento DateTime
+  AlumnoGrado     AlumnoGrado[]
+}
+
+//● Profesor: Id, Nombre Apellidos, Género
+model Profesor {
+  id          Int           @id @default(autoincrement())
+  nombre      String
+  apellidos   String
+  Genero      String
+  Grado       Grado[]
+  AlumnoGrado AlumnoGrado[]
+}
+
+//● Grado: Id, Nombre, ProfesorId
+model Grado {
+  id          Int           @id @default(autoincrement())
+  nombre      String
+  profesor    Profesor      @relation(fields: [ProfesorId], references: [id])
+  ProfesorId  Int
+  AlumnoGrado AlumnoGrado[]
+}
+
+//● AlumnoGrado: Id, AlumnoId, GradoId, Sección.
+model AlumnoGrado {
+  alumno     Alumno   @relation(fields: [alumnoId], references: [id])
+  alumnoId   Int
+  grado      Grado    @relation(fields: [gradoId], references: [id])
+  gradoId    Int
+  profesor   Profesor @relation(fields: [ProfesorId], references: [id])
+  ProfesorId Int
+  Seccion    String
+  assignedAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+}
